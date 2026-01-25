@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Pencil, Settings, LogOut } from "lucide-react";
 
+import { errorToMessage } from "@/lib/utils";
+
 import { useSession } from "@/hooks/useSession";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 import { SupabaseMissing } from "@/components/SupabaseMissing";
@@ -25,7 +27,7 @@ export default function ProfilePage() {
         .eq("id", user!.id)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) throw new Error(errorToMessage(error));
       return data as unknown as ProfileRow | null;
     },
   });
