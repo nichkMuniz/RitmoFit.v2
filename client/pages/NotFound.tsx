@@ -17,7 +17,8 @@ const NotFound = () => {
         <div className="rounded-3xl border border-border bg-card p-6">
           <h1 className="text-2xl font-semibold">404</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Página não encontrada: <span className="text-foreground">{location.pathname}</span>
+            Página não encontrada:{" "}
+            <span className="text-foreground">{location.pathname}</span>
           </p>
 
           <Link

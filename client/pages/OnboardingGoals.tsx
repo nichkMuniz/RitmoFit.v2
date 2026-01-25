@@ -46,9 +46,15 @@ function goalTypeMeta(type: GoalType | null) {
     case 1:
       return { label: "Treino", className: "bg-brand-blue/15 text-brand-blue" };
     case 2:
-      return { label: "Dieta", className: "bg-brand-green/15 text-brand-green" };
+      return {
+        label: "Dieta",
+        className: "bg-brand-green/15 text-brand-green",
+      };
     case 3:
-      return { label: "Hábito", className: "bg-brand-yellow/15 text-brand-yellow" };
+      return {
+        label: "Hábito",
+        className: "bg-brand-yellow/15 text-brand-yellow",
+      };
     default:
       return { label: "Meta", className: "bg-muted text-muted-foreground" };
   }
@@ -62,7 +68,9 @@ export default function OnboardingGoalsPage() {
 
   // step 1
   const [goalFilter, setGoalFilter] = useState<"all" | GoalType>("all");
-  const [selectedGoalIds, setSelectedGoalIds] = useState<Set<string>>(() => new Set());
+  const [selectedGoalIds, setSelectedGoalIds] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   // step 2
   const [duration, setDuration] = useState<number>(30);
@@ -70,7 +78,9 @@ export default function OnboardingGoalsPage() {
   const [visibility, setVisibility] = useState<Visibility>(1);
 
   // step 3
-  const [selectedRoutineId, setSelectedRoutineId] = useState<string | null>(null);
+  const [selectedRoutineId, setSelectedRoutineId] = useState<string | null>(
+    null,
+  );
 
   const goalsQuery = useQuery({
     queryKey: ["goals"],
@@ -127,7 +137,8 @@ export default function OnboardingGoalsPage() {
     mutationFn: async ({ routineId }: { routineId: string | null }) => {
       if (!hasSupabaseEnv) throw new Error("Supabase não configurado");
       if (!user) throw new Error("Usuário não autenticado");
-      if (selectedGoalIds.size === 0) throw new Error("Selecione pelo menos uma meta");
+      if (selectedGoalIds.size === 0)
+        throw new Error("Selecione pelo menos uma meta");
 
       const rows = Array.from(selectedGoalIds).map((goalId) => {
         const goal = goalsById.get(goalId);
@@ -147,7 +158,8 @@ export default function OnboardingGoalsPage() {
       if (error) throw new Error(errorToMessage(error));
 
       try {
-        if (routineId) localStorage.setItem("ritmofit.selectedRoutineId", routineId);
+        if (routineId)
+          localStorage.setItem("ritmofit.selectedRoutineId", routineId);
         else localStorage.removeItem("ritmofit.selectedRoutineId");
       } catch {
         // ignore
@@ -265,9 +277,13 @@ export default function OnboardingGoalsPage() {
             </div>
 
             {goalsQuery.isLoading ? (
-              <div className="mt-4 text-sm text-muted-foreground">Carregando metas...</div>
+              <div className="mt-4 text-sm text-muted-foreground">
+                Carregando metas...
+              </div>
             ) : goalsQuery.isError ? (
-              <div className="mt-4 text-sm text-brand-red">Não foi possível carregar metas.</div>
+              <div className="mt-4 text-sm text-brand-red">
+                Não foi possível carregar metas.
+              </div>
             ) : filteredGoals.length === 0 ? (
               <div className="mt-4 rounded-2xl border border-border/70 bg-background/40 p-4 text-sm text-muted-foreground">
                 Sem metas para este filtro.
@@ -298,7 +314,9 @@ export default function OnboardingGoalsPage() {
                         </span>
                         <div
                           className={`h-5 w-5 rounded-full border ${
-                            selected ? "border-primary bg-primary" : "border-border/70"
+                            selected
+                              ? "border-primary bg-primary"
+                              : "border-border/70"
                           }`}
                           aria-hidden
                         />
@@ -320,7 +338,9 @@ export default function OnboardingGoalsPage() {
 
         {step === 2 ? (
           <div className="rounded-3xl border border-border bg-card p-5">
-            <div className="text-lg font-semibold">Defina tempo e frequência</div>
+            <div className="text-lg font-semibold">
+              Defina tempo e frequência
+            </div>
             <div className="mt-1 text-sm text-muted-foreground">
               Isso será aplicado para as metas selecionadas.
             </div>
@@ -345,7 +365,9 @@ export default function OnboardingGoalsPage() {
 
             <div className="mt-4 grid grid-cols-1 gap-3">
               <div className="rounded-2xl border border-border/70 bg-background/40 p-4">
-                <div className="text-xs text-muted-foreground">Tempo para cumprir</div>
+                <div className="text-xs text-muted-foreground">
+                  Tempo para cumprir
+                </div>
                 <select
                   value={duration}
                   onChange={(e) => setDuration(Number(e.target.value))}
@@ -374,10 +396,14 @@ export default function OnboardingGoalsPage() {
               </div>
 
               <div className="rounded-2xl border border-border/70 bg-background/40 p-4">
-                <div className="text-xs text-muted-foreground">Visibilidade</div>
+                <div className="text-xs text-muted-foreground">
+                  Visibilidade
+                </div>
                 <select
                   value={visibility}
-                  onChange={(e) => setVisibility(Number(e.target.value) as Visibility)}
+                  onChange={(e) =>
+                    setVisibility(Number(e.target.value) as Visibility)
+                  }
                   className="mt-2 h-11 w-full rounded-xl border border-border bg-background/40 px-3 text-sm outline-none"
                 >
                   <option value={0}>Seguidores</option>
@@ -392,7 +418,9 @@ export default function OnboardingGoalsPage() {
           <div className="rounded-3xl border border-border bg-card p-5">
             <div className="flex items-center gap-2">
               <Wrench className="h-5 w-5 text-primary" />
-              <div className="text-lg font-semibold">Personalize suas rotinas</div>
+              <div className="text-lg font-semibold">
+                Personalize suas rotinas
+              </div>
             </div>
             <div className="mt-1 text-sm text-muted-foreground">
               Você pode escolher uma rotina agora, ou pular e decidir depois.
@@ -405,11 +433,15 @@ export default function OnboardingGoalsPage() {
                 className="rounded-2xl border border-border/70 bg-background/30 p-4 text-left opacity-70"
               >
                 <div className="text-sm font-semibold">Criar minha rotina</div>
-                <div className="mt-1 text-xs text-muted-foreground">Em manutenção</div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  Em manutenção
+                </div>
               </button>
 
               {routinesQuery.isLoading ? (
-                <div className="text-sm text-muted-foreground">Carregando rotinas...</div>
+                <div className="text-sm text-muted-foreground">
+                  Carregando rotinas...
+                </div>
               ) : routinesQuery.isError ? (
                 <div className="text-sm text-brand-red">
                   Não foi possível carregar rotinas (verifique tabela e RLS).
@@ -439,7 +471,9 @@ export default function OnboardingGoalsPage() {
                           <div className="text-sm font-semibold">{title}</div>
                           <div
                             className={`h-5 w-5 rounded-full border ${
-                              selected ? "border-primary bg-primary" : "border-border/70"
+                              selected
+                                ? "border-primary bg-primary"
+                                : "border-border/70"
                             }`}
                             aria-hidden
                           />

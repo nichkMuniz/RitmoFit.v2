@@ -32,11 +32,7 @@ function typeGoalLabel(typeGoal: number) {
   return `Tipo ${typeGoal}`;
 }
 
-export function GoalProgress({
-  userGoalsId,
-}: {
-  userGoalsId?: string | null;
-}) {
+export function GoalProgress({ userGoalsId }: { userGoalsId?: string | null }) {
   const [open, setOpen] = useState(false);
 
   const query = useQuery({
@@ -145,9 +141,7 @@ export function GoalProgress({
                 Visibilidade
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                {query.data.visibility === 1
-                  ? "Pública"
-                  : "Apenas seguidores"}
+                {query.data.visibility === 1 ? "Pública" : "Apenas seguidores"}
               </p>
             </div>
           </div>

@@ -51,8 +51,8 @@ export function FeedFirstLoadDialog({
                 Bem-vindo, <span className="text-foreground">{userLabel}</span>.
               </span>
             ) : null}{" "}
-            Vamos focar em consistência: publique, execute rotinas e incentive quem
-            você segue.
+            Vamos focar em consistência: publique, execute rotinas e incentive
+            quem você segue.
           </DialogDescription>
         </DialogHeader>
 

@@ -13,7 +13,9 @@ export function AppTopBar() {
       <div className="mx-auto flex h-14 w-full max-w-md items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-brand-pink via-brand-red to-brand-gold shadow-[0_0_0_1px_hsl(var(--border))]">
-            <span className="text-sm font-extrabold tracking-tight text-black">R</span>
+            <span className="text-sm font-extrabold tracking-tight text-black">
+              R
+            </span>
           </span>
           <div className="leading-tight">
             <div className="text-[15px] font-semibold">RitmoFit</div>

@@ -1,5 +1,11 @@
 import { NavLink } from "react-router-dom";
-import { Clapperboard, Dumbbell, Home, PlusSquare, UserRound } from "lucide-react";
+import {
+  Clapperboard,
+  Dumbbell,
+  Home,
+  PlusSquare,
+  UserRound,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Tab = {
@@ -48,8 +54,7 @@ export function AppTabBar() {
                   <Icon
                     className={cn(
                       "h-5 w-5",
-                      to === "/create" &&
-                        "h-[22px] w-[22px] text-brand-pink",
+                      to === "/create" && "h-[22px] w-[22px] text-brand-pink",
                     )}
                   />
                 </span>

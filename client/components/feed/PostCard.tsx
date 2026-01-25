@@ -78,7 +78,9 @@ export function PostCard({ post }: { post: FeedPost }) {
             <div className="text-sm font-semibold">
               {post.user.name ?? "Usuário"}
             </div>
-            <div className="text-[11px] text-muted-foreground">@{post.user.id.slice(0, 8)}</div>
+            <div className="text-[11px] text-muted-foreground">
+              @{post.user.id.slice(0, 8)}
+            </div>
           </div>
         </div>
 
@@ -284,7 +286,12 @@ function IncentivesRow({ postId }: { postId: string }) {
       toast.success("Incentivo enviado");
     },
     onError: (e) => {
-      toast.error(errorToMessage(e, "Falha ao enviar incentivo (verifique a coluna likes.type)"));
+      toast.error(
+        errorToMessage(
+          e,
+          "Falha ao enviar incentivo (verifique a coluna likes.type)",
+        ),
+      );
     },
   });
 

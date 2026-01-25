@@ -113,7 +113,6 @@ export default function Index() {
       {!hasSupabaseEnv ? <SupabaseMissing /> : null}
       <FeedFirstLoadDialog enabled={Boolean(user)} userLabel={user?.email} />
 
-
       {hasSupabaseEnv ? (
         <StoriesRail
           users={(usersQuery.data ?? [])

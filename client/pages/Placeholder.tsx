@@ -17,8 +17,8 @@ export default function PlaceholderPage({
 
       <div className="rounded-3xl border border-border/70 bg-gradient-to-tr from-brand-pink/20 via-brand-red/10 to-brand-gold/20 p-5">
         <p className="text-sm text-muted-foreground">
-          Próximo passo recomendado: conectar o Supabase (Auth + banco) e ativar o
-          feed real.
+          Próximo passo recomendado: conectar o Supabase (Auth + banco) e ativar
+          o feed real.
         </p>
       </div>
     </div>

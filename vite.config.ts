@@ -21,7 +21,12 @@ export default defineConfig(({ mode }) => ({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "robots.txt", "placeholder.svg", "pwa-icon.svg"],
+      includeAssets: [
+        "favicon.ico",
+        "robots.txt",
+        "placeholder.svg",
+        "pwa-icon.svg",
+      ],
       manifest: {
         name: "RitmoFit",
         short_name: "RitmoFit",

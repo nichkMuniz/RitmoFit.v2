@@ -107,7 +107,8 @@ export default function CreatePostPage() {
               <option value="">{user ? "Escolha..." : "Faça login"}</option>
               {(goalsQuery.data ?? []).map((g) => (
                 <option key={g.id} value={g.id}>
-                  {typeGoalLabel(g.type_goal)} — {g.goals?.description ?? "Meta"}
+                  {typeGoalLabel(g.type_goal)} —{" "}
+                  {g.goals?.description ?? "Meta"}
                 </option>
               ))}
             </select>
