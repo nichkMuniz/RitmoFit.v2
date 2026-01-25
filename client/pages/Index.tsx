@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
@@ -18,9 +19,9 @@ type DbPostRow = {
   id: string;
   description: string | null;
   photo: string | null;
-  update_at: string | null;
+  updated_at: string | null;
   user_id: string;
-  user_goals_id: string;
+  user_goal_id: string;
 };
 
 export default function Index() {
@@ -47,8 +48,8 @@ export default function Index() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id,description,photo,update_at,user_id,user_goals_id")
-        .order("update_at", { ascending: false })
+        .select("id,description,photo,updated_at,user_id,user_goal_id")
+        .order("updated_at", { ascending: false })
         .limit(20);
 
       if (error) throw error;
@@ -69,8 +70,8 @@ export default function Index() {
         id: post.id,
         description: post.description,
         photo: post.photo,
-        update_at: post.update_at,
-        user_goals_id: post.user_goals_id,
+        updated_at: post.updated_at,
+        user_goal_id: post.user_goal_id,
         user: {
           id: post.user_id,
           name: usersMap.get(post.user_id)?.name ?? null,

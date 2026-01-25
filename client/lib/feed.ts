@@ -6,9 +6,9 @@ export async function fetchFeed() {
   const { data, error } = await supabase
     .from("posts")
     .select(
-      "id,description,photo,update_at,user_id,user_goals_id,users(id,name,avatar_url)",
+      "id,description,photo,updated_at,user_id,user_goal_id,users(id,name,avatar_url)",
     )
-    .order("update_at", { ascending: false });
+    .order("updated_at", { ascending: false });
 
   if (error) throw error;
   return data ?? [];
