@@ -4,13 +4,7 @@ export default function RoutinesPage() {
   return (
     <div className="space-y-4">
       <div className="rounded-3xl border border-border bg-card p-5">
-        <h1 className="text-lg font-semibold">Rotinas</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Construa rotinas (treino/dieta/hábito), copie de outros usuários e
-          execute com gamificação.
-        </p>
-
-        <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
             className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary text-sm font-semibold text-primary-foreground"

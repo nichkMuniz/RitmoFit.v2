@@ -73,14 +73,6 @@ export default function CreatePostPage() {
       {!hasSupabaseEnv ? <SupabaseMissing /> : null}
 
       <div className="rounded-3xl border border-border bg-card p-5">
-        <h1 className="text-lg font-semibold">Criar post</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Todo post é vinculado a uma meta (<code>user_goals</code>). Esse é o
-          motor de consistência do RitmoFit.
-        </p>
-      </div>
-
-      <div className="rounded-3xl border border-border bg-card p-5">
         <div className="flex items-center justify-between">
           <div className="text-sm font-semibold">Mídia</div>
           <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-background/40">

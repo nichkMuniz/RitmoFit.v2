@@ -4,14 +4,6 @@ export default function ReelsPage() {
   return (
     <div className="space-y-4">
       <div className="rounded-3xl border border-border bg-card p-5">
-        <h1 className="text-lg font-semibold">Reels</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Vídeos curtos para treinos, hábitos e transformação — com swipe vertical
-          (estilo Instagram).
-        </p>
-      </div>
-
-      <div className="rounded-3xl border border-border bg-card p-5">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm font-semibold">Player</div>
