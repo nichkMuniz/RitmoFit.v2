@@ -62,7 +62,7 @@ export default function AuthPage() {
       return;
     }
 
-    navigate("/", { replace: true });
+    navigate("/onboarding/goals", { replace: true });
   };
 
   const handleSignup = async (values: SignupValues) => {
