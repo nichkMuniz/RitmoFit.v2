@@ -37,7 +37,8 @@ export default function Index() {
   const usersQuery = useQuery({
     queryKey: ["users", "stories"],
     enabled: hasSupabaseEnv,
-    queryFn: async () => {
+    queryFn: console.log("TEST POSTS:", await supabase.from("posts").select("*").limit(3));
+    /*async () => {
       const { data, error } = await supabase
         .from("users")
         .select("id,name")
@@ -47,7 +48,7 @@ export default function Index() {
       if (error) throw error;
       return (data ?? []) as Array<{ id: string; name: string | null }>;
     },
-  });
+  });*/
 
   const feedQuery = useQuery({
     queryKey: ["feed"],
