@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -9,14 +9,14 @@ import { useSession } from "@/hooks/useSession";
 import { SupabaseMissing } from "@/components/SupabaseMissing";
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "Mínimo de 6 caracteres"),
 });
 
 const signupSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(6),
+  name: z.string().min(2, "Informe seu nome"),
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "Mínimo de 6 caracteres"),
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
@@ -25,22 +25,26 @@ type SignupValues = z.infer<typeof signupSchema>;
 export default function AuthPage() {
   const navigate = useNavigate();
   const { user, isReady } = useSession();
+
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const schema = useMemo(() => (mode === "login" ? loginSchema : signupSchema), [mode]);
-
-  const form = useForm<LoginValues | SignupValues>({
-    resolver: zodResolver(schema),
-    defaultValues: { email: "", password: "" } as LoginValues,
+  const loginForm = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
   });
 
-  if (isReady && user) {
-    navigate("/", { replace: true });
-  }
+  const signupForm = useForm<SignupValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: { name: "", email: "", password: "" },
+  });
 
-  const onSubmit = async (values: LoginValues | SignupValues) => {
+  useEffect(() => {
+    if (isReady && user) navigate("/", { replace: true });
+  }, [isReady, user, navigate]);
+
+  const handleLogin = async (values: LoginValues) => {
     setErrorMsg(null);
     setSuccessMsg(null);
 
@@ -49,29 +53,30 @@ export default function AuthPage() {
       return;
     }
 
-    if (mode === "login") {
-      const v = values as LoginValues;
-      const { error } = await supabase.auth.signInWithPassword({
-        email: v.email,
-        password: v.password,
-      });
-
-      if (error) {
-        setErrorMsg(error.message);
-        return;
-      }
-
-      navigate("/", { replace: true });
+    const { error } = await supabase.auth.signInWithPassword(values);
+    if (error) {
+      setErrorMsg(error.message);
       return;
     }
 
-    const v = values as SignupValues;
+    navigate("/", { replace: true });
+  };
+
+  const handleSignup = async (values: SignupValues) => {
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    if (!hasSupabaseEnv) {
+      setErrorMsg("Supabase não está configurado.");
+      return;
+    }
+
     const { error } = await supabase.auth.signUp({
-      email: v.email,
-      password: v.password,
+      email: values.email,
+      password: values.password,
       options: {
         data: {
-          name: v.name,
+          name: values.name,
         },
       },
     });
@@ -85,6 +90,8 @@ export default function AuthPage() {
       "Conta criada. Se a confirmação por e-mail estiver habilitada no Supabase, verifique sua caixa de entrada.",
     );
   };
+
+  const form = mode === "login" ? loginForm : signupForm;
 
   return (
     <div className="min-h-dvh bg-background px-4 pb-10 pt-10 text-foreground">
@@ -114,7 +121,6 @@ export default function AuthPage() {
               setMode("login");
               setErrorMsg(null);
               setSuccessMsg(null);
-              form.reset({ email: "", password: "" } as LoginValues);
             }}
             className={
               mode === "login"
@@ -130,7 +136,6 @@ export default function AuthPage() {
               setMode("signup");
               setErrorMsg(null);
               setSuccessMsg(null);
-              form.reset({ name: "", email: "", password: "" } as SignupValues);
             }}
             className={
               mode === "signup"
@@ -144,7 +149,11 @@ export default function AuthPage() {
 
         <form
           className="mt-4 space-y-3 rounded-3xl border border-border bg-card p-5"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={
+            mode === "login"
+              ? loginForm.handleSubmit(handleLogin)
+              : signupForm.handleSubmit(handleSignup)
+          }
         >
           {mode === "signup" ? (
             <div className="space-y-2">
@@ -152,12 +161,14 @@ export default function AuthPage() {
                 Nome
               </label>
               <input
-                {...form.register("name" as const)}
+                {...signupForm.register("name")}
                 placeholder="Seu nome"
                 className="h-11 w-full rounded-2xl border border-border bg-background/60 px-4 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
               />
-              {form.formState.errors["name" as keyof typeof form.formState.errors] ? (
-                <p className="text-xs text-brand-red">Nome é obrigatório.</p>
+              {signupForm.formState.errors.name ? (
+                <p className="text-xs text-brand-red">
+                  {signupForm.formState.errors.name.message}
+                </p>
               ) : null}
             </div>
           ) : null}
@@ -167,11 +178,23 @@ export default function AuthPage() {
               Email
             </label>
             <input
-              {...form.register("email" as const)}
+              {...(mode === "login"
+                ? loginForm.register("email")
+                : signupForm.register("email"))}
               placeholder="voce@email.com"
               inputMode="email"
               className="h-11 w-full rounded-2xl border border-border bg-background/60 px-4 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
             />
+            {mode === "login" && loginForm.formState.errors.email ? (
+              <p className="text-xs text-brand-red">
+                {loginForm.formState.errors.email.message}
+              </p>
+            ) : null}
+            {mode === "signup" && signupForm.formState.errors.email ? (
+              <p className="text-xs text-brand-red">
+                {signupForm.formState.errors.email.message}
+              </p>
+            ) : null}
           </div>
 
           <div className="space-y-2">
@@ -179,11 +202,23 @@ export default function AuthPage() {
               Senha
             </label>
             <input
-              {...form.register("password" as const)}
+              {...(mode === "login"
+                ? loginForm.register("password")
+                : signupForm.register("password"))}
               placeholder="••••••••"
               type="password"
               className="h-11 w-full rounded-2xl border border-border bg-background/60 px-4 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
             />
+            {mode === "login" && loginForm.formState.errors.password ? (
+              <p className="text-xs text-brand-red">
+                {loginForm.formState.errors.password.message}
+              </p>
+            ) : null}
+            {mode === "signup" && signupForm.formState.errors.password ? (
+              <p className="text-xs text-brand-red">
+                {signupForm.formState.errors.password.message}
+              </p>
+            ) : null}
           </div>
 
           {errorMsg ? (
