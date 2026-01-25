@@ -15,6 +15,7 @@ import { AppLayout } from "@/layouts/AppLayout";
 import { RequireAuth } from "@/routes/RequireAuth";
 
 import Auth from "./pages/Auth";
+import OnboardingGoals from "./pages/OnboardingGoals";
 import Index from "./pages/Index";
 import Reels from "./pages/Reels";
 import CreatePost from "./pages/CreatePost";
@@ -42,14 +43,18 @@ function App() {
             <Routes>
               <Route path="/auth" element={<Auth />} />
 
-              <Route element={<AppLayout />}>
-                <Route path="/" element={<Index />} />
-                <Route path="/reels" element={<Reels />} />
-                <Route path="/create" element={<CreatePost />} />
-                <Route path="/routines" element={<Routines />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/ranking" element={<Ranking />} />
+              <Route element={<RequireAuth />}>
+                <Route path="/onboarding/goals" element={<OnboardingGoals />} />
+
+                <Route element={<AppLayout />}>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/reels" element={<Reels />} />
+                  <Route path="/create" element={<CreatePost />} />
+                  <Route path="/routines" element={<Routines />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/ranking" element={<Ranking />} />
+                </Route>
               </Route>
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
