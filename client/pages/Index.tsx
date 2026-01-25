@@ -42,7 +42,7 @@ export default function Index() {
   });
 
   const feedQuery = useQuery({
-    queryKey: ["feed"],
+    queryKey: ["feed", user?.id ?? "anonymous"],
     enabled: hasSupabaseEnv,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -53,7 +53,32 @@ export default function Index() {
 
       if (error) throw error;
 
-      const posts = (data ?? []) as unknown as DbPostRow[];
+      let posts = (data ?? []) as unknown as DbPostRow[];
+
+      if (user?.id) {
+        const [{ data: postComplaints }, { data: userComplaints }] =
+          await Promise.all([
+            supabase
+              .from("post_complaint")
+              .select("post_id")
+              .eq("user_id", user.id),
+            supabase
+              .from("user_complaint")
+              .select("follower_id")
+              .eq("user_id", user.id),
+          ]);
+
+        const blockedPostIds = new Set(
+          (postComplaints ?? []).map((r) => r.post_id as string),
+        );
+        const blockedUserIds = new Set(
+          (userComplaints ?? []).map((r) => r.follower_id as string),
+        );
+
+        posts = posts.filter(
+          (p) => !blockedPostIds.has(p.id) && !blockedUserIds.has(p.user_id),
+        );
+      }
 
       // Buscar usuários separadamente (mais confiável)
       const userIds = [...new Set(posts.map((p) => p.user_id))];
