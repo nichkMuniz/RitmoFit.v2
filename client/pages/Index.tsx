@@ -17,23 +17,18 @@ type DbPostRow = {
   id: string;
   description: string | null;
   photo: string | null;
-  update_at: string | null;
-  users?: DbUserRow | DbUserRow[] | null;
-  likes?: Array<{ count: number }> | null;
-  comments?: Array<{ count: number }> | null;
+  text: string | null;
+  created_at: string;
+  updated_at: string | null;
+  users?: DbUserRow | null;
 };
 
-function normalizeUser(users: DbPostRow["users"], fallbackUserId?: string): FeedPost["user"] {
-  const u = Array.isArray(users) ? users[0] : users;
+function normalizeUser(user: DbUserRow | null | undefined): FeedPost["user"] {
   return {
-    id: u?.id ?? fallbackUserId ?? "unknown",
-    name: u?.name ?? null,
-    avatar_url: u?.avatar_url ?? null,
+    id: user?.id ?? "unknown",
+    name: user?.name ?? null,
+    avatar_url: user?.avatar_url ?? null,
   };
-}
-
-function countFromAggregate(agg: Array<{ count: number }> | null | undefined) {
-  return agg?.[0]?.count ?? 0;
 }
 
 export default function Index() {
@@ -55,45 +50,47 @@ export default function Index() {
   });
 
   const feedQuery = useQuery({
-    queryKey: ["feed", user?.id ?? "anonymous"],
+    queryKey: ["feed"],
     enabled: hasSupabaseEnv,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select(
-          [
-            "id",
-            "description",
-            "photo",
-            "update_at",
-            "users(id,name,avatar_url)",
-            "likes(count)",
-            "comments(count)",
-          ].join(","),
-        )
-        .order("update_at", { ascending: false })
-        .limit(20);
+        .select(`
+          id,
+          description,
+          photo,
+          text,
+          created_at,
+          updated_at,
+          users (
+            id,
+            name,
+            avatar_url
+          )
+        `)
+        .order("created_at", { ascending: false })
+        .limit(50);
 
       if (error) throw error;
-      const rows = (data ?? []) as unknown as DbPostRow[];
+      const rows = (data ?? []) as DbPostRow[];
 
       return rows.map((row) => ({
         id: row.id,
         description: row.description,
         photo: row.photo,
-        update_at: row.update_at,
+        text: row.text,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
         user: normalizeUser(row.users),
-        likesCount: countFromAggregate(row.likes),
-        commentsCount: countFromAggregate(row.comments),
+        likesCount: 0,
+        commentsCount: 0,
       })) satisfies FeedPost[];
     },
   });
 
   return (
     <div className="space-y-5">
-      {!hasSupabaseEnv ? (
-        <SupabaseMissing />
-      ) : null}
+      {!hasSupabaseEnv ? <SupabaseMissing /> : null}
 
       <div className="rounded-3xl border border-border bg-card p-5">
         <h1 className="text-lg font-semibold">Feed</h1>
@@ -145,8 +142,8 @@ export default function Index() {
           <div className="rounded-3xl border border-border bg-card p-5">
             <div className="text-sm font-semibold">Erro ao carregar</div>
             <div className="mt-1 text-xs text-muted-foreground">
-              Confira se o banco está com as tabelas do modelo RitmoFit e se as
-              políticas RLS permitem leitura.
+              Verifique se existem dados na tabela <code>posts</code> e se as
+              políticas RLS permitem SELECT.
             </div>
           </div>
         ) : null}
@@ -159,8 +156,7 @@ export default function Index() {
           <div className="rounded-3xl border border-border bg-card p-5">
             <div className="text-sm font-semibold">Ainda sem posts</div>
             <div className="mt-1 text-xs text-muted-foreground">
-              Assim que houver posts no Supabase (tabela <code>posts</code>),
-              eles vão aparecer aqui.
+              Assim que houver posts no Supabase, eles vão aparecer aqui.
             </div>
           </div>
         ) : null}
