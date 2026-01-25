@@ -20,7 +20,7 @@ export type FeedPost = {
   photo: string | null;
   created_at?: string | null;
   updated_at?: string | null;
-  user_goals_id?: string | null;
+  user_goal_id?: string | null;
   user: {
     id: string;
     name: string | null;
@@ -85,7 +85,7 @@ export function PostCard({ post }: { post: FeedPost }) {
       </div>
 
       <div className="space-y-2 px-4 py-3">
-        <GoalProgress userGoalsId={post.user_goals_id} />
+        <GoalProgress userGoalsId={post.user_goal_id} />
         <IncentivesRow postId={post.id} />
 
         <div className="flex items-center gap-3">
