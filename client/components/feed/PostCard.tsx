@@ -153,19 +153,24 @@ function IncentivesRow({ postId }: { postId: string }) {
   });
 
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="flex items-center gap-2">
       {incentives.map(({ type, label, Icon }) => (
-        <button
-          key={type}
-          type="button"
-          onClick={() => mutation.mutate(type)}
-          disabled={mutation.isPending}
-          className="flex h-10 items-center justify-center gap-2 rounded-2xl border border-border/70 bg-background/40 px-3 text-xs font-semibold text-foreground transition hover:bg-background/60 disabled:opacity-60"
-          aria-label={label}
-        >
-          <Icon className="h-4 w-4 text-brand-pink" />
-          <span className="truncate">{label}</span>
-        </button>
+        <Tooltip key={type}>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => mutation.mutate(type)}
+              disabled={mutation.isPending}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-background/40 text-foreground transition hover:bg-background/60 disabled:opacity-60"
+              aria-label={label}
+            >
+              <Icon className="h-4 w-4 text-brand-pink" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">
+            {label}
+          </TooltipContent>
+        </Tooltip>
       ))}
     </div>
   );
