@@ -1,18 +1,35 @@
 import type { ComponentType } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
+  Flag,
   HandHeart,
   Medal,
   MessageCircle,
   MoreHorizontal,
   TrendingUp,
+  UserX,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useSession } from "@/hooks/useSession";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 import { GoalProgress } from "@/components/feed/ProgressBar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Tooltip,
   TooltipContent,
@@ -63,13 +80,7 @@ export function PostCard({ post }: { post: FeedPost }) {
           </div>
         </div>
 
-        <button
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-background/60"
-          aria-label="Mais opções"
-          type="button"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </button>
+        <PostMenu postId={post.id} postUserId={post.user.id} />
       </div>
 
       <div className="aspect-square w-full bg-background/40">
