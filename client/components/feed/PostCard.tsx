@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 import { useSession } from "@/hooks/useSession";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
+import { GoalProgress } from "@/components/feed/ProgressBar";
 
 export type FeedPost = {
   id: string;
@@ -84,6 +85,7 @@ export function PostCard({ post }: { post: FeedPost }) {
       </div>
 
       <div className="space-y-2 px-4 py-3">
+        <GoalProgress userGoalsId={post.user_goals_id} />
         <IncentivesRow postId={post.id} />
 
         <div className="flex items-center gap-3">

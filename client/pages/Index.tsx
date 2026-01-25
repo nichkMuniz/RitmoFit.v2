@@ -19,8 +19,9 @@ type DbPostRow = {
   id: string;
   description: string | null;
   photo: string | null;
-  created_at: string;
+  update_at: string | null;
   user_id: string;
+  user_goals_id: string;
 };
 
 export default function Index() {
@@ -47,13 +48,13 @@ export default function Index() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id,description,photo,created_at,user_id")
-        .order("created_at", { ascending: false })
+        .select("id,description,photo,update_at,user_id,user_goals_id")
+        .order("update_at", { ascending: false })
         .limit(20);
 
       if (error) throw error;
 
-      const posts = data ?? [];
+      const posts = (data ?? []) as unknown as DbPostRow[];
 
       // Buscar usuários separadamente (mais confiável)
       const userIds = [...new Set(posts.map((p) => p.user_id))];
@@ -69,7 +70,8 @@ export default function Index() {
         id: post.id,
         description: post.description,
         photo: post.photo,
-        created_at: post.created_at,
+        update_at: post.update_at,
+        user_goals_id: post.user_goals_id,
         user: {
           id: post.user_id,
           name: usersMap.get(post.user_id)?.name ?? null,
