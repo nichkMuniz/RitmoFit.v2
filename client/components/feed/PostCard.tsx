@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
@@ -33,7 +34,7 @@ type IncentiveType = 1 | 2 | 3;
 const incentives: Array<{
   type: IncentiveType;
   label: string;
-  Icon: React.ComponentType<{ className?: string }>;
+  Icon: ComponentType<{ className?: string }>;
 }> = [
   { type: 1, label: "Te apoio", Icon: HandHeart },
   { type: 2, label: "Continua", Icon: TrendingUp },
