@@ -17,7 +17,7 @@ import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 type UserGoalRow = {
   id: string;
   user_id: string;
-  goals_id: string;
+  goal_id: string;
   type_goal: number;
   duration: number;
   quantity: number;
@@ -46,7 +46,7 @@ export function GoalProgress({
       const { data, error } = await supabase
         .from("user_goals")
         .select(
-          "id,user_id,goals_id,type_goal,duration,quantity,visibility,goals(description,duration,quantity)",
+          "id,user_id,goal_id,type_goal,duration,quantity,visibility,goals(description,duration,quantity)",
         )
         .eq("id", userGoalsId!)
         .maybeSingle();
