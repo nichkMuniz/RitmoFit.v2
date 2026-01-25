@@ -1,10 +1,24 @@
-import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import {
+  HandHeart,
+  Medal,
+  MessageCircle,
+  MoreHorizontal,
+  TrendingUp,
+} from "lucide-react";
+import { toast } from "sonner";
+
+import { useSession } from "@/hooks/useSession";
+import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 
 export type FeedPost = {
   id: string;
   description: string | null;
   photo: string | null;
-  update_at: string | null;
+  created_at?: string | null;
+  update_at?: string | null;
+  user_goals_id?: string | null;
   user: {
     id: string;
     name: string | null;
@@ -12,8 +26,19 @@ export type FeedPost = {
   };
   likesCount: number;
   commentsCount: number;
-  isLiked?: boolean;
 };
+
+type IncentiveType = 1 | 2 | 3;
+
+const incentives: Array<{
+  type: IncentiveType;
+  label: string;
+  Icon: React.ComponentType<{ className?: string }>;
+}> = [
+  { type: 1, label: "Te apoio", Icon: HandHeart },
+  { type: 2, label: "Continua", Icon: TrendingUp },
+  { type: 3, label: "Orgulho", Icon: Medal },
+];
 
 export function PostCard({ post }: { post: FeedPost }) {
   return (
@@ -58,14 +83,9 @@ export function PostCard({ post }: { post: FeedPost }) {
       </div>
 
       <div className="space-y-2 px-4 py-3">
+        <IncentivesRow postId={post.id} />
+
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl hover:bg-background/60"
-            aria-label="Curtir"
-          >
-            <Heart className="h-5 w-5" />
-          </button>
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-2xl hover:bg-background/60"
@@ -75,7 +95,7 @@ export function PostCard({ post }: { post: FeedPost }) {
           </button>
 
           <div className="ml-auto text-xs text-muted-foreground">
-            {post.likesCount} curtidas • {post.commentsCount} comentários
+            {post.likesCount} incentivos • {post.commentsCount} comentários
           </div>
         </div>
 
@@ -87,5 +107,58 @@ export function PostCard({ post }: { post: FeedPost }) {
         ) : null}
       </div>
     </article>
+  );
+}
+
+function IncentivesRow({ postId }: { postId: string }) {
+  const navigate = useNavigate();
+  const { user } = useSession();
+
+  const mutation = useMutation({
+    mutationFn: async (type: IncentiveType) => {
+      if (!hasSupabaseEnv) throw new Error("Supabase não configurado");
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      const { error } = await supabase
+        .from("likes")
+        // Requires a new column: likes.type (int)
+        .upsert(
+          { user_id: user.id, post_id: postId, type },
+          { onConflict: "user_id,post_id" },
+        );
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Incentivo enviado");
+    },
+    onError: (e) => {
+      toast.error(
+        e instanceof Error
+          ? e.message
+          : "Falha ao enviar incentivo (verifique a coluna likes.type)",
+      );
+    },
+  });
+
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {incentives.map(({ type, label, Icon }) => (
+        <button
+          key={type}
+          type="button"
+          onClick={() => mutation.mutate(type)}
+          disabled={mutation.isPending}
+          className="flex h-10 items-center justify-center gap-2 rounded-2xl border border-border/70 bg-background/40 px-3 text-xs font-semibold text-foreground transition hover:bg-background/60 disabled:opacity-60"
+          aria-label={label}
+        >
+          <Icon className="h-4 w-4 text-brand-pink" />
+          <span className="truncate">{label}</span>
+        </button>
+      ))}
+    </div>
   );
 }
