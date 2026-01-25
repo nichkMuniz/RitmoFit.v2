@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { useSession } from "@/hooks/useSession";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
+import { errorToMessage } from "@/lib/utils";
 
 type Visibility = 0 | 1;
 type GoalType = 1 | 2 | 3;
@@ -76,7 +77,7 @@ export default function OnboardingGoalsPage() {
     enabled: hasSupabaseEnv,
     queryFn: async () => {
       const { data, error } = await supabase.from("goals").select("*");
-      if (error) throw error;
+      if (error) throw new Error(errorToMessage(error));
       return (data ?? []) as unknown as GoalRow[];
     },
   });
@@ -86,7 +87,7 @@ export default function OnboardingGoalsPage() {
     enabled: hasSupabaseEnv && step === 3,
     queryFn: async () => {
       const { data, error } = await supabase.from("routines").select("*");
-      if (error) throw error;
+      if (error) throw new Error(errorToMessage(error));
       return (data ?? []) as unknown as RoutineRow[];
     },
   });
@@ -143,7 +144,7 @@ export default function OnboardingGoalsPage() {
       });
 
       const { error } = await supabase.from("user_goals").insert(rows);
-      if (error) throw error;
+      if (error) throw new Error(errorToMessage(error));
 
       try {
         if (routineId) localStorage.setItem("ritmofit.selectedRoutineId", routineId);
@@ -158,7 +159,7 @@ export default function OnboardingGoalsPage() {
     },
     onError: (e) => {
       console.error(e);
-      toast.error(e instanceof Error ? e.message : "Falha ao salvar");
+      toast.error(errorToMessage(e, "Falha ao salvar"));
     },
   });
 
