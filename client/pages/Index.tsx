@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 import { useSession } from "@/hooks/useSession";
 import { SupabaseMissing } from "@/components/SupabaseMissing";
+import { FeedFirstLoadDialog } from "@/components/feed/FeedFirstLoadDialog";
 import { StoriesRail } from "@/components/feed/StoriesRail";
 import { PostCard, type FeedPost } from "@/components/feed/PostCard";
 
@@ -82,6 +84,7 @@ export default function Index() {
   return (
     <div className="space-y-5">
       {!hasSupabaseEnv ? <SupabaseMissing /> : null}
+      <FeedFirstLoadDialog enabled={Boolean(user)} userLabel={user?.email} />
 
       <div className="rounded-3xl border border-border bg-card p-5">
         <h1 className="text-lg font-semibold">Feed</h1>
@@ -95,7 +98,7 @@ export default function Index() {
             <div>
               <div className="text-sm font-semibold">Entrar para evoluir</div>
               <div className="text-xs text-muted-foreground">
-                Login habilita seguir pessoas, curtir, comentar e ganhar pontos.
+                Login habilita seguir pessoas, comentar e ganhar pontos.
               </div>
             </div>
             <Link
@@ -105,12 +108,7 @@ export default function Index() {
               Login
             </Link>
           </div>
-        ) : (
-          <div className="mt-4 rounded-2xl border border-border/70 bg-background/60 p-4">
-            <div className="text-sm font-semibold">Bem-vindo de volta</div>
-            <div className="text-xs text-muted-foreground">{user.email}</div>
-          </div>
-        )}
+        ) : null}
       </div>
 
       {hasSupabaseEnv ? (
