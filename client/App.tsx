@@ -12,6 +12,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 
 import { AppLayout } from "@/layouts/AppLayout";
+import { RequireAuth } from "@/routes/RequireAuth";
+
 import Auth from "./pages/Auth";
 import Index from "./pages/Index";
 import Reels from "./pages/Reels";
