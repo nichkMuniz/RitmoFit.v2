@@ -19,7 +19,7 @@ export type FeedPost = {
   description: string | null;
   photo: string | null;
   created_at?: string | null;
-  update_at?: string | null;
+  updated_at?: string | null;
   user_goals_id?: string | null;
   user: {
     id: string;
