@@ -13,6 +13,11 @@ import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 import { GoalProgress } from "@/components/feed/ProgressBar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type FeedPost = {
   id: string;
