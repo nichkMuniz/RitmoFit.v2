@@ -2,6 +2,7 @@ import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { createServer } from "./server";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -16,7 +17,36 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist/spa",
   },
-  plugins: [react(), expressPlugin()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      includeAssets: ["favicon.ico", "robots.txt", "placeholder.svg", "pwa-icon.svg"],
+      manifest: {
+        name: "RitmoFit",
+        short_name: "RitmoFit",
+        description:
+          "Rede social fitness com hábitos, metas, rotinas e gamificação.",
+        theme_color: "#000000",
+        background_color: "#000000",
+        display: "standalone",
+        start_url: "/",
+        scope: "/",
+        icons: [
+          {
+            src: "/pwa-icon.svg",
+            sizes: "any",
+            type: "image/svg+xml",
+            purpose: "any maskable",
+          },
+        ],
+      },
+      devOptions: {
+        enabled: true,
+      },
+    }),
+    expressPlugin(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
