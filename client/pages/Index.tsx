@@ -17,19 +17,9 @@ type DbPostRow = {
   id: string;
   description: string | null;
   photo: string | null;
-  text: string | null;
   created_at: string;
-  updated_at: string | null;
-  users?: DbUserRow | null;
+  user_id: string;
 };
-
-function normalizeUser(user: DbUserRow | null | undefined): FeedPost["user"] {
-  return {
-    id: user?.id ?? "unknown",
-    name: user?.name ?? null,
-    avatar_url: user?.avatar_url ?? null,
-  };
-}
 
 export default function Index() {
   const { user } = useSession();
@@ -37,8 +27,7 @@ export default function Index() {
   const usersQuery = useQuery({
     queryKey: ["users", "stories"],
     enabled: hasSupabaseEnv,
-    queryFn: console.log("TEST POSTS:", await supabase.from("posts").select("*").limit(3));
-    /*async () => {
+    queryFn: async () => {
       const { data, error } = await supabase
         .from("users")
         .select("id,name")
@@ -46,7 +35,8 @@ export default function Index() {
         .limit(12);
 
       if (error) throw error;
-      return (data ?? []) as Array<{ id: string; name: string | null }>;*/
+      return data ?? [];
+    },
   });
 
   const feedQuery = useQuery({
@@ -55,33 +45,34 @@ export default function Index() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select(`
-          id,
-          description,
-          photo,
-          text,
-          created_at,
-          updated_at,
-          users (
-            id,
-            name,
-            avatar_url
-          )
-        `)
+        .select("id,description,photo,created_at,user_id")
         .order("created_at", { ascending: false })
-        .limit(50);
+        .limit(20);
 
       if (error) throw error;
-      const rows = (data ?? []) as DbPostRow[];
 
-      return rows.map((row) => ({
-        id: row.id,
-        description: row.description,
-        photo: row.photo,
-        text: row.text,
-        created_at: row.created_at,
-        updated_at: row.updated_at,
-        user: normalizeUser(row.users),
+      const posts = data ?? [];
+
+      // Buscar usuários separadamente (mais confiável)
+      const userIds = [...new Set(posts.map((p) => p.user_id))];
+
+      const { data: users } = await supabase
+        .from("users")
+        .select("id,name,avatar_url")
+        .in("id", userIds);
+
+      const usersMap = new Map(users?.map((u) => [u.id, u]));
+
+      return posts.map((post) => ({
+        id: post.id,
+        description: post.description,
+        photo: post.photo,
+        created_at: post.created_at,
+        user: {
+          id: post.user_id,
+          name: usersMap.get(post.user_id)?.name ?? null,
+          avatar_url: usersMap.get(post.user_id)?.avatar_url ?? null,
+        },
         likesCount: 0,
         commentsCount: 0,
       })) satisfies FeedPost[];
