@@ -41,7 +41,7 @@ export default function AuthPage() {
   });
 
   useEffect(() => {
-    if (isReady && user) navigate("/", { replace: true });
+    if (isReady && user) navigate("/onboarding/goals", { replace: true });
   }, [isReady, user, navigate]);
 
   const handleLogin = async (values: LoginValues) => {
