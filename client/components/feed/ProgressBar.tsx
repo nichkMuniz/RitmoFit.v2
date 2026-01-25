@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BarChart3, Lock, Globe } from "lucide-react";
 
+import { errorToMessage } from "@/lib/utils";
+
 import {
   Dialog,
   DialogContent,
@@ -49,7 +51,7 @@ export function GoalProgress({
         .eq("id", userGoalsId!)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) throw new Error(errorToMessage(error));
       return data as unknown as UserGoalRow | null;
     },
   });
