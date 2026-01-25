@@ -74,7 +74,7 @@ export default function AuthPage() {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
       options: {
@@ -86,6 +86,11 @@ export default function AuthPage() {
 
     if (error) {
       setErrorMsg(error.message);
+      return;
+    }
+
+    if (data.session) {
+      navigate("/onboarding/goals", { replace: true });
       return;
     }
 
