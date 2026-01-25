@@ -53,7 +53,7 @@ export default function CreatePostPage() {
 
     const { error } = await supabase.from("posts").insert({
       user_id: user!.id,
-      user_goals_id: userGoalsId,
+      user_goal_id: userGoalsId,
       description: description.trim() ? description.trim() : null,
       photo: null,
     });
