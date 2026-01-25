@@ -289,24 +289,40 @@ function OptionList<T extends { id: string; name: string; description: string | 
 
   return (
     <div className="mt-3 grid gap-2">
-      {items.map((it) => (
-        <button
-          key={it.id}
-          type="button"
-          onClick={() => onToggle(it.id)}
-          className="flex items-start gap-3 rounded-2xl border border-border/70 bg-background/40 p-4 text-left hover:bg-background/60"
-        >
-          <Checkbox checked={selected.has(it.id)} />
-          <div className="min-w-0">
-            <div className="text-sm font-semibold">{it.name}</div>
-            {it.description ? (
-              <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                {it.description}
-              </div>
-            ) : null}
+      {items.map((it) => {
+        const checked = selected.has(it.id);
+
+        return (
+          <div
+            key={it.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => onToggle(it.id)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onToggle(it.id);
+              }
+            }}
+            className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border/70 bg-background/40 p-4 text-left hover:bg-background/60"
+          >
+            <Checkbox
+              checked={checked}
+              onCheckedChange={() => onToggle(it.id)}
+              onClick={(e) => e.stopPropagation()}
+              aria-label={checked ? "Desmarcar" : "Marcar"}
+            />
+            <div className="min-w-0">
+              <div className="text-sm font-semibold">{it.name}</div>
+              {it.description ? (
+                <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                  {it.description}
+                </div>
+              ) : null}
+            </div>
           </div>
-        </button>
-      ))}
+        );
+      })}
     </div>
   );
 }
