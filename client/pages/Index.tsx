@@ -87,30 +87,6 @@ export default function Index() {
       {!hasSupabaseEnv ? <SupabaseMissing /> : null}
       <FeedFirstLoadDialog enabled={Boolean(user)} userLabel={user?.email} />
 
-      <div className="rounded-3xl border border-border bg-card p-5">
-        <h1 className="text-lg font-semibold">Feed</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Conteúdo real (posts vinculados a metas) — com visual inspirado no
-          Instagram e foco em consistência.
-        </p>
-
-        {!user ? (
-          <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-background/60 p-4">
-            <div>
-              <div className="text-sm font-semibold">Entrar para evoluir</div>
-              <div className="text-xs text-muted-foreground">
-                Login habilita seguir pessoas, comentar e ganhar pontos.
-              </div>
-            </div>
-            <Link
-              to="/auth"
-              className="inline-flex h-10 shrink-0 items-center justify-center rounded-2xl bg-primary px-4 text-sm font-semibold text-primary-foreground"
-            >
-              Login
-            </Link>
-          </div>
-        ) : null}
-      </div>
 
       {hasSupabaseEnv ? (
         <StoriesRail
