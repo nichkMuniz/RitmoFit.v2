@@ -46,9 +46,9 @@ export default function Index() {
         .limit(12);
 
       if (error) throw error;
-      return (data ?? []) as Array<{ id: string; name: string | null }>;
+      return (data ?? []) as Array<{ id: string; name: string | null }>;*/
     },
-  });*/
+  });
 
   const feedQuery = useQuery({
     queryKey: ["feed"],
