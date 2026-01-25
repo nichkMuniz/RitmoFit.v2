@@ -1,4 +1,5 @@
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
+import { errorToMessage } from "@/lib/utils";
 
 export async function fetchFeed() {
   if (!hasSupabaseEnv) return [];
@@ -10,6 +11,6 @@ export async function fetchFeed() {
     )
     .order("updated_at", { ascending: false });
 
-  if (error) throw error;
+  if (error) throw new Error(errorToMessage(error));
   return data ?? [];
 }
