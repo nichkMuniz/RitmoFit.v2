@@ -75,7 +75,7 @@ export default function Index() {
         .limit(20);
 
       if (error) throw error;
-      const rows = (data ?? []) as DbPostRow[];
+      const rows = (data ?? []) as unknown as DbPostRow[];
 
       return rows.map((row) => ({
         id: row.id,

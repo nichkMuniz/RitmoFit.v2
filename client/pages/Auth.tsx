@@ -53,7 +53,10 @@ export default function AuthPage() {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword(values);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
     if (error) {
       setErrorMsg(error.message);
       return;
