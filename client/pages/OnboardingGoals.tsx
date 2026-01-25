@@ -135,7 +135,7 @@ export default function OnboardingGoalsPage() {
 
         return {
           user_id: user.id,
-          goals_id: goalId,
+          goal_id: goalId,
           type_goal,
           duration,
           quantity,
