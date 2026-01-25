@@ -1,11 +1,27 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as
-  | string
-  | undefined;
+function readEnv(key: string) {
+  const raw = (import.meta.env[key] as string | undefined) ?? undefined;
+  const trimmed = raw?.trim();
+  return trimmed && trimmed.length > 0 ? trimmed : undefined;
+}
 
-export const hasSupabaseEnv = Boolean(supabaseUrl && supabaseAnonKey);
+const supabaseUrl = readEnv("VITE_SUPABASE_URL");
+const supabaseAnonKey = readEnv("VITE_SUPABASE_ANON_KEY");
+
+function isValidHttpUrl(url: string | undefined) {
+  if (!url) return false;
+  try {
+    const u = new URL(url);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+export const hasSupabaseEnv = Boolean(
+  isValidHttpUrl(supabaseUrl) && supabaseAnonKey,
+);
 
 export const supabase = hasSupabaseEnv
   ? createClient(supabaseUrl!, supabaseAnonKey!)
