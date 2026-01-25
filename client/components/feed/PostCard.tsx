@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { errorToMessage } from "@/lib/utils";
+
 import { useSession } from "@/hooks/useSession";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 import { GoalProgress } from "@/components/feed/ProgressBar";
@@ -166,7 +168,7 @@ function PostMenu({
           post_id: postId,
           reason: payloadReason,
         });
-        if (error) throw error;
+        if (error) throw new Error(errorToMessage(error));
       }
 
       if (kind === "user") {
@@ -175,7 +177,7 @@ function PostMenu({
           follower_id: postUserId,
           reason: payloadReason,
         });
-        if (error) throw error;
+        if (error) throw new Error(errorToMessage(error));
       }
     },
     onSuccess: () => {
@@ -186,7 +188,7 @@ function PostMenu({
       queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
     onError: (e) => {
-      toast.error(e instanceof Error ? e.message : "Falha ao denunciar");
+      toast.error(errorToMessage(e, "Falha ao denunciar"));
     },
   });
 
@@ -276,17 +278,13 @@ function IncentivesRow({ postId }: { postId: string }) {
           { onConflict: "user_id,post_id" },
         );
 
-      if (error) throw error;
+      if (error) throw new Error(errorToMessage(error));
     },
     onSuccess: () => {
       toast.success("Incentivo enviado");
     },
     onError: (e) => {
-      toast.error(
-        e instanceof Error
-          ? e.message
-          : "Falha ao enviar incentivo (verifique a coluna likes.type)",
-      );
+      toast.error(errorToMessage(e, "Falha ao enviar incentivo (verifique a coluna likes.type)"));
     },
   });
 
