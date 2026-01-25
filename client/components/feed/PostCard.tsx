@@ -129,6 +129,133 @@ export function PostCard({ post }: { post: FeedPost }) {
   );
 }
 
+function PostMenu({
+  postId,
+  postUserId,
+}: {
+  postId: string;
+  postUserId: string;
+}) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { user } = useSession();
+
+  const [open, setOpen] = useState(false);
+  const [kind, setKind] = useState<"post" | "user" | null>(null);
+  const [reason, setReason] = useState("");
+
+  const title = useMemo(() => {
+    if (kind === "post") return "Reportar postagem";
+    if (kind === "user") return "Reportar usuário";
+    return "";
+  }, [kind]);
+
+  const submit = useMutation({
+    mutationFn: async () => {
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+      if (!hasSupabaseEnv) throw new Error("Supabase não configurado");
+
+      const payloadReason = reason.trim() ? reason.trim() : "(sem motivo)";
+
+      if (kind === "post") {
+        const { error } = await supabase.from("post_complaint").insert({
+          user_id: user.id,
+          post_id: postId,
+          reason: payloadReason,
+        });
+        if (error) throw error;
+      }
+
+      if (kind === "user") {
+        const { error } = await supabase.from("user_complaint").insert({
+          user_id: user.id,
+          follower_id: postUserId,
+          reason: payloadReason,
+        });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Denúncia enviada");
+      setOpen(false);
+      setReason("");
+      setKind(null);
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
+    },
+    onError: (e) => {
+      toast.error(e instanceof Error ? e.message : "Falha ao denunciar");
+    },
+  });
+
+  const openDialog = (next: "post" | "user") => {
+    setKind(next);
+    setOpen(true);
+  };
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-background/60"
+            aria-label="Mais opções"
+            type="button"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-52">
+          <DropdownMenuItem onSelect={() => openDialog("post")}>
+            <Flag className="mr-2 h-4 w-4" />
+            Reportar postagem
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => openDialog("user")}>
+            <UserX className="mr-2 h-4 w-4" />
+            Reportar usuário
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="w-[92vw] max-w-md rounded-3xl border-border bg-card p-5">
+          <DialogHeader className="text-left">
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>
+              Ao denunciar, este conteúdo/usuário pode deixar de aparecer para
+              você.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-3">
+            <label className="text-xs font-medium text-muted-foreground">
+              Motivo
+            </label>
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Explique rapidamente o motivo..."
+              className="mt-2 min-h-24 w-full resize-none rounded-2xl border border-border bg-background/40 px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </div>
+
+          <button
+            type="button"
+            disabled={submit.isPending || !kind}
+            onClick={() => submit.mutate()}
+            className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-2xl bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+          >
+            Enviar denúncia
+          </button>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
 function IncentivesRow({ postId }: { postId: string }) {
   const navigate = useNavigate();
   const { user } = useSession();
