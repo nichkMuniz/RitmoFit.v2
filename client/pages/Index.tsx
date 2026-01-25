@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
+import { errorToMessage } from "@/lib/utils";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 import { useSession } from "@/hooks/useSession";
 import { SupabaseMissing } from "@/components/SupabaseMissing";
@@ -36,7 +37,7 @@ export default function Index() {
         .order("name", { ascending: true })
         .limit(12);
 
-      if (error) throw error;
+      if (error) throw new Error(errorToMessage(error));
       return data ?? [];
     },
   });
@@ -51,7 +52,7 @@ export default function Index() {
         .order("updated_at", { ascending: false })
         .limit(20);
 
-      if (error) throw error;
+      if (error) throw new Error(errorToMessage(error));
 
       let posts = (data ?? []) as unknown as DbPostRow[];
 
