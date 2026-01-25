@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { ImagePlus, Target } from "lucide-react";
 import { toast } from "sonner";
 
+import { errorToMessage } from "@/lib/utils";
+
 import { useSession } from "@/hooks/useSession";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 import { SupabaseMissing } from "@/components/SupabaseMissing";
@@ -38,7 +40,7 @@ export default function CreatePostPage() {
         .order("id", { ascending: false })
         .limit(25);
 
-      if (error) throw error;
+      if (error) throw new Error(errorToMessage(error));
       return (data ?? []) as unknown as UserGoalOption[];
     },
   });
@@ -59,7 +61,7 @@ export default function CreatePostPage() {
     });
 
     if (error) {
-      toast.error(error.message);
+      toast.error(errorToMessage(error, "Falha ao criar post"));
       return;
     }
 
