@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 import { useSession } from "@/hooks/useSession";
-import { SupabaseMissing } from "@/components/SupabaseMissing";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -104,23 +103,11 @@ export default function AuthPage() {
   return (
     <div className="min-h-dvh bg-background px-4 pb-10 pt-10 text-foreground">
       <div className="mx-auto w-full max-w-md">
-        <div className="mb-8">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-pink via-brand-red to-brand-gold">
+        <div className="mb-8 flex flex-col">
+          <div className="mx-auto inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-pink via-brand-red to-brand-gold">
             <span className="text-base font-extrabold text-black">R</span>
           </div>
-          <h1 className="mt-4 text-2xl font-semibold tracking-tight">
-            {mode === "login" ? "Entrar" : "Criar conta"}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Rotinas, hábitos, metas e comunidade — com gamificação e propósito.
-          </p>
         </div>
-
-        {!hasSupabaseEnv ? (
-          <div className="mb-6">
-            <SupabaseMissing />
-          </div>
-        ) : null}
 
         <div className="grid grid-cols-2 gap-2 rounded-2xl border border-border bg-card p-1">
           <button
@@ -213,7 +200,7 @@ export default function AuthPage() {
               {...(mode === "login"
                 ? loginForm.register("password")
                 : signupForm.register("password"))}
-              placeholder="••••••••"
+              placeholder=""
               type="password"
               className="h-11 w-full rounded-2xl border border-border bg-background/60 px-4 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
             />
