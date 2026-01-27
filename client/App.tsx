@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { registerSW } from "virtual:pwa-register";
 
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,10 +27,6 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function App() {
-  useEffect(() => {
-    registerSW({ immediate: true });
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
