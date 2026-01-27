@@ -20,45 +20,25 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
-      includeAssets: [
-        "favicon.ico",
-        "robots.txt",
-        "placeholder.svg",
-        "pwa-icon.svg",
-      ],
-      manifest: {
-        name: "RitmoFit",
-        short_name: "RitmoFit",
-        description:
-          "Rede social fitness com hábitos, metas, rotinas e gamificação.",
-        theme_color: "#000000",
-        background_color: "#000000",
-        display: "standalone",
-        start_url: "/",
-        scope: "/",
-        icons: [
-          {
-            src: "/pwa-icon.svg",
-            sizes: "any",
-            type: "image/svg+xml",
-            purpose: "any maskable",
-          },
-        ],
-      },
+      registerType: 'autoUpdate',
       devOptions: {
         enabled: false,
       },
-    }),
-    expressPlugin(),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./client"),
-      "@shared": path.resolve(__dirname, "./shared"),
-    },
-  },
-}));
+      workbox: {
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+      },
+    })
+    ,
+        expressPlugin(),
+      ],
+      resolve: {
+        alias: {
+          "@": path.resolve(__dirname, "./client"),
+          "@shared": path.resolve(__dirname, "./shared"),
+        },
+      },
+    }));
 
 function expressPlugin(): Plugin {
   return {
