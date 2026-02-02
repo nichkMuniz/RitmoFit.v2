@@ -1,10 +1,14 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+"use client";
 
 import { useSession } from "@/hooks/useSession";
 
-export function RequireAuth() {
+interface RequireAuthProps {
+  children: React.ReactNode;
+  onUnauthenticated?: () => void;
+}
+
+export function RequireAuth({ children, onUnauthenticated }: RequireAuthProps) {
   const { user, isReady } = useSession();
-  const location = useLocation();
 
   if (!isReady) {
     return (
@@ -19,8 +23,11 @@ export function RequireAuth() {
   }
 
   if (!user) {
-    return <Navigate to="/auth" replace state={{ from: location }} />;
+    if (onUnauthenticated) {
+      onUnauthenticated();
+    }
+    return null;
   }
 
-  return <Outlet />;
+  return <>{children}</>;
 }
