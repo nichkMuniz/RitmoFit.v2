@@ -1,13 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
-function readEnv(key: string) {
-  const raw = (import.meta.env[key] as string | undefined) ?? undefined;
-  const trimmed = raw?.trim();
-  return trimmed && trimmed.length > 0 ? trimmed : undefined;
-}
-
-const supabaseUrl = readEnv("VITE_SUPABASE_URL");
-const supabaseAnonKey = readEnv("VITE_SUPABASE_ANON_KEY");
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 function isValidHttpUrl(url: string | undefined) {
   if (!url) return false;

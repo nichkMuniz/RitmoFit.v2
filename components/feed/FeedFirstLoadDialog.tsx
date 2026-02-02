@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useMemo, useState } from "react";
 import { Sparkles, Trophy } from "lucide-react";
 
@@ -40,7 +42,7 @@ export function FeedFirstLoadDialog({
       <DialogContent className="w-[92vw] max-w-md rounded-3xl border-border bg-card p-5">
         <DialogHeader className="text-left">
           <DialogTitle className="flex items-center gap-2">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-pink via-brand-red to-brand-gold">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary via-secondary to-accent">
               <Sparkles className="h-4 w-4 text-black" />
             </span>
             Seu ritmo de hoje
@@ -59,7 +61,7 @@ export function FeedFirstLoadDialog({
         <div className="mt-4 grid gap-3">
           <div className="rounded-2xl border border-border/70 bg-background/60 p-4">
             <div className="flex items-center gap-2 text-sm font-semibold">
-              <Trophy className="h-4 w-4 text-brand-gold" />
+              <Trophy className="h-4 w-4 text-accent" />
               Dica de gamificação
             </div>
             <p className="mt-1 text-xs text-muted-foreground">

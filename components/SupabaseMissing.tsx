@@ -1,3 +1,5 @@
+"use client";
+
 export function SupabaseMissing() {
   return (
     <div className="rounded-3xl border border-border bg-card p-5">
@@ -10,8 +12,8 @@ export function SupabaseMissing() {
       <div className="mt-4 rounded-2xl border border-border/70 bg-background/60 p-4 text-xs text-muted-foreground">
         <div className="font-medium text-foreground">Env vars necessárias</div>
         <ul className="mt-2 list-disc space-y-1 pl-5">
-          <li>VITE_SUPABASE_URL</li>
-          <li>VITE_SUPABASE_ANON_KEY</li>
+          <li>NEXT_PUBLIC_SUPABASE_URL</li>
+          <li>NEXT_PUBLIC_SUPABASE_ANON_KEY</li>
         </ul>
       </div>
     </div>

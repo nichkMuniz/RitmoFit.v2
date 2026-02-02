@@ -2,7 +2,10 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./client/**/*.{ts,tsx}"],
+  content: [
+    "./app/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -49,11 +52,6 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
-        },
-        brand: {
-          pink: "hsl(var(--primary))",
-          red: "hsl(var(--secondary))",
-          gold: "hsl(var(--accent))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

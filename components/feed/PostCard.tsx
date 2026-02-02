@@ -1,7 +1,9 @@
+"use client";
+
 import type { ComponentType } from "react";
 import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import {
   Flag,
   HandHeart,
@@ -71,7 +73,7 @@ export function PostCard({ post }: { post: FeedPost }) {
     <article className="overflow-hidden rounded-3xl border border-border bg-card">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 overflow-hidden rounded-full bg-gradient-to-tr from-brand-pink via-brand-red to-brand-gold p-[1px]">
+          <div className="h-9 w-9 overflow-hidden rounded-full bg-gradient-to-tr from-primary via-secondary to-accent p-[1px]">
             <div className="h-full w-full rounded-full bg-background" />
           </div>
           <div className="leading-tight">
@@ -140,7 +142,7 @@ function PostMenu({
   postId: string;
   postUserId: string;
 }) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { user } = useSession();
 
@@ -157,7 +159,7 @@ function PostMenu({
   const submit = useMutation({
     mutationFn: async () => {
       if (!user) {
-        navigate("/auth");
+        router.push("/auth");
         return;
       }
       if (!hasSupabaseEnv) throw new Error("Supabase não configurado");
@@ -261,20 +263,19 @@ function PostMenu({
 }
 
 function IncentivesRow({ postId }: { postId: string }) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useSession();
 
   const mutation = useMutation({
     mutationFn: async (type: IncentiveType) => {
       if (!hasSupabaseEnv) throw new Error("Supabase não configurado");
       if (!user) {
-        navigate("/auth");
+        router.push("/auth");
         return;
       }
 
       const { error } = await supabase
         .from("likes")
-        // Requires a new column: likes.type (int)
         .upsert(
           { user_id: user.id, post_id: postId, type },
           { onConflict: "user_id,post_id" },
@@ -307,7 +308,7 @@ function IncentivesRow({ postId }: { postId: string }) {
               className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-background/40 text-foreground transition hover:bg-background/60 disabled:opacity-60"
               aria-label={label}
             >
-              <Icon className="h-4 w-4 text-brand-pink" />
+              <Icon className="h-4 w-4 text-primary" />
             </button>
           </TooltipTrigger>
           <TooltipContent side="top" className="text-xs">

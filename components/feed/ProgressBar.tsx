@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BarChart3, Lock, Globe } from "lucide-react";
@@ -53,8 +55,6 @@ export function GoalProgress({ userGoalsId }: { userGoalsId?: string | null }) {
   });
 
   const progress = useMemo(() => {
-    // Ainda não temos tabela de progressos diários no schema.
-    // Por enquanto, exibimos 0% como base visual.
     return 0;
   }, []);
 
@@ -69,7 +69,7 @@ export function GoalProgress({ userGoalsId }: { userGoalsId?: string | null }) {
         >
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-brand-gold" />
+              <BarChart3 className="h-4 w-4 text-accent" />
               <div>
                 <div className="text-xs font-semibold">Progresso da meta</div>
                 <div className="text-[11px] text-muted-foreground">
@@ -84,7 +84,7 @@ export function GoalProgress({ userGoalsId }: { userGoalsId?: string | null }) {
 
           <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-background/60">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-pink via-brand-red to-brand-gold"
+              className="h-full rounded-full bg-gradient-to-r from-primary via-secondary to-accent"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -106,7 +106,7 @@ export function GoalProgress({ userGoalsId }: { userGoalsId?: string | null }) {
         ) : null}
 
         {query.isError ? (
-          <div className="rounded-2xl border border-brand-red/40 bg-brand-red/10 p-4 text-sm text-brand-red">
+          <div className="rounded-2xl border border-secondary/40 bg-secondary/10 p-4 text-sm text-secondary">
             Não foi possível carregar a meta. Verifique o schema/RLS.
           </div>
         ) : null}
@@ -134,9 +134,9 @@ export function GoalProgress({ userGoalsId }: { userGoalsId?: string | null }) {
             <div className="rounded-2xl border border-border/70 bg-background/60 p-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 {query.data.visibility === 1 ? (
-                  <Globe className="h-4 w-4 text-brand-gold" />
+                  <Globe className="h-4 w-4 text-accent" />
                 ) : (
-                  <Lock className="h-4 w-4 text-brand-gold" />
+                  <Lock className="h-4 w-4 text-accent" />
                 )}
                 Visibilidade
               </div>
