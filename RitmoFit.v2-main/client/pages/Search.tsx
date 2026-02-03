@@ -157,24 +157,41 @@ export default function SearchPage() {
       if (!hasSupabaseEnv || !user) throw new Error("Usuário não autenticado");
 
       if (isFollowing) {
-        // Deixar de seguir
-        const { error } = await supabase
-          .from("following")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("following_id", userId);
+        // Deixar de seguir: remove de following e followers
+        const [followingDelete, followersDelete] = await Promise.all([
+          supabase
+            .from("following")
+            .delete()
+            .eq("user_id", user.id)
+            .eq("following_id", userId),
+          supabase
+            .from("followers")
+            .delete()
+            .eq("user_id", userId)
+            .eq("follower_id", user.id),
+        ]);
 
-        if (error) throw new Error(errorToMessage(error));
+        if (followingDelete.error)
+          throw new Error(errorToMessage(followingDelete.error));
+        if (followersDelete.error)
+          throw new Error(errorToMessage(followersDelete.error));
       } else {
-        // Seguir
-        const { error } = await supabase
-          .from("following")
-          .insert({
+        // Seguir: adiciona em following e registra em followers
+        const [followingInsert, followersInsert] = await Promise.all([
+          supabase.from("following").insert({
             user_id: user.id,
             following_id: userId,
-          });
+          }),
+          supabase.from("followers").insert({
+            user_id: userId,
+            follower_id: user.id,
+          }),
+        ]);
 
-        if (error) throw new Error(errorToMessage(error));
+        if (followingInsert.error)
+          throw new Error(errorToMessage(followingInsert.error));
+        if (followersInsert.error)
+          throw new Error(errorToMessage(followersInsert.error));
       }
     },
     onSuccess: () => {

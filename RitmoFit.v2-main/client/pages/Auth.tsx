@@ -46,8 +46,35 @@ export default function AuthPage() {
     defaultValues: { name: "", nickname: "", email: "", password: "", confirmPassword: "" },
   });
 
+  async function redirectAfterAuth(userId: string) {
+    if (!hasSupabaseEnv) {
+      navigate("/", { replace: true });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("user_goals")
+      .select("id")
+      .eq("user_id", userId)
+      .limit(1);
+
+    if (error) {
+      // Em caso de erro, manter fluxo atual de metas
+      navigate("/onboarding/goals", { replace: true });
+      return;
+    }
+
+    if (data && data.length > 0) {
+      navigate("/", { replace: true });
+    } else {
+      navigate("/onboarding/goals", { replace: true });
+    }
+  }
+
   useEffect(() => {
-    if (isReady && user) navigate("/onboarding/goals", { replace: true });
+    if (isReady && user) {
+      redirectAfterAuth(user.id);
+    }
   }, [isReady, user, navigate]);
 
   const handleLogin = async (values: LoginValues) => {
@@ -87,8 +114,6 @@ export default function AuthPage() {
       setErrorMsg(error.message);
       return;
     }
-
-    navigate("/onboarding/goals", { replace: true });
   };
 
   const handleSignup = async (values: SignupValues) => {
@@ -149,12 +174,16 @@ export default function AuthPage() {
     }
 
     if (data.session) {
-      navigate("/onboarding/goals", { replace: true });
+      await redirectAfterAuth(data.user?.id ?? "");
       return;
     }
 
-    // Mesmo sem sessão, redirecionar para metas após primeiro cadastro
-    navigate("/onboarding/goals", { replace: true });
+    // Mesmo sem sessão imediata, seguir fluxo padrão de metas/fluxo inicial
+    if (data.user?.id) {
+      await redirectAfterAuth(data.user.id);
+    } else {
+      navigate("/onboarding/goals", { replace: true });
+    }
   };
 
   const form = mode === "login" ? loginForm : signupForm;

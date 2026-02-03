@@ -5,7 +5,6 @@ import { useSession } from "@/hooks/useSession";
 
 import { errorToMessage } from "@/lib/utils";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase";
-import { useSession } from "@/hooks/useSession";
 import { SupabaseMissing } from "@/components/SupabaseMissing";
 import { FeedFirstLoadDialog } from "@/components/feed/FeedFirstLoadDialog";
 import { StoriesRail } from "@/components/feed/StoriesRail";
